@@ -11,6 +11,8 @@ import ktx.app.KtxScreen
 import ktx.log.info
 import ktx.log.logger
 
+const val UNIT_SCALE = 1 / 16f
+
 class DarkMatter : KtxGame<DarkMatterScreen>() {
     val batch: Batch by lazy { SpriteBatch() }
 
