@@ -1,11 +1,24 @@
 package com.github.kietyo.darkmatter
 
-import com.badlogic.gdx.Game
-import com.github.kietyo.darkmatter.FirstScreen
+import com.badlogic.gdx.Application
+import com.badlogic.gdx.Gdx
+import com.github.kietyo.darkmatter.screen.FirstScreen
+import com.github.kietyo.darkmatter.screen.SecondScreen
+import ktx.app.KtxGame
+import ktx.app.KtxScreen
+import ktx.log.info
+import ktx.log.logger
 
-/** [com.badlogic.gdx.ApplicationListener] implementation shared by all platforms.  */
-class DarkMatter : Game() {
+class DarkMatter : KtxGame<KtxScreen>() {
     override fun create() {
-        setScreen(FirstScreen())
+        Gdx.app.logLevel = Application.LOG_DEBUG
+        log.info { "Creating game instance" }
+        addScreen(FirstScreen(this))
+        addScreen(SecondScreen(this))
+        setScreen<FirstScreen>()
+    }
+
+    companion object {
+        private val log = logger<DarkMatter>()
     }
 }
