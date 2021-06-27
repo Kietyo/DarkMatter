@@ -2,20 +2,23 @@ package com.github.kietyo.darkmatter
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
-import com.github.kietyo.darkmatter.screen.FirstScreen
-import com.github.kietyo.darkmatter.screen.SecondScreen
+import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.github.kietyo.darkmatter.screen.DarkMatterScreen
+import com.github.kietyo.darkmatter.screen.GameScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.log.info
 import ktx.log.logger
 
-class DarkMatter : KtxGame<KtxScreen>() {
+class DarkMatter : KtxGame<DarkMatterScreen>() {
+    val batch: Batch by lazy { SpriteBatch() }
+
     override fun create() {
         Gdx.app.logLevel = Application.LOG_DEBUG
         log.info { "Creating game instance" }
-        addScreen(FirstScreen(this))
-        addScreen(SecondScreen(this))
-        setScreen<FirstScreen>()
+        addScreen(GameScreen(this))
+        setScreen<GameScreen>()
     }
 
     companion object {
