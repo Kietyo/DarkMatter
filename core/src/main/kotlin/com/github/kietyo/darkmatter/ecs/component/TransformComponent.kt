@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Pool
 import ktx.ashley.mapperFor
 
-class TransformComponent : Component, Pool.Poolable {
+class TransformComponent : Component, Pool.Poolable, Comparable<TransformComponent> {
     val position = Vector3()
     val size = Vector2(1f, 1f)
     var rotationDeg = 0f
@@ -19,5 +19,10 @@ class TransformComponent : Component, Pool.Poolable {
 
     companion object {
         val mapper = mapperFor<TransformComponent>()
+    }
+
+    override fun compareTo(other: TransformComponent): Int {
+        val zDiff = position.z - other.position.z
+        return (if (zDiff == 0f) position.y - other.position.y else zDiff).toInt()
     }
 }
