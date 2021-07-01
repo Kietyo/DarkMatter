@@ -1,3 +1,5 @@
+import com.github.kietyo.darkmatter.ecs.component.FacingComponent
+
 inline fun <reified T> membersOf() = T::class.members
 
 data class Test(val data: Int) {
@@ -11,8 +13,5 @@ data class Test(val data: Int) {
 }
 
 fun main(s: Array<String>) {
-    println(membersOf<StringBuilder>().joinToString("\n"))
-    val test1 = Test(1)
-    val test2 = Test(2)
-    println(Test.compare(test1, test2))
+    val test = FacingComponent()
 }

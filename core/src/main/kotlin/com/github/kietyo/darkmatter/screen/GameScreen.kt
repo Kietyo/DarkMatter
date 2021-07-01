@@ -7,7 +7,9 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.kietyo.darkmatter.DarkMatter
 import com.github.kietyo.darkmatter.UNIT_SCALE
+import com.github.kietyo.darkmatter.ecs.component.FacingComponent
 import com.github.kietyo.darkmatter.ecs.component.GraphicComponent
+import com.github.kietyo.darkmatter.ecs.component.PlayerComponent
 import com.github.kietyo.darkmatter.ecs.component.TransformComponent
 import ktx.ashley.entity
 import ktx.ashley.get
@@ -17,24 +19,19 @@ import ktx.log.debug
 import ktx.log.logger
 
 class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
-    private val playerTexture = Texture(Gdx.files.internal("graphics/ship_base.png"))
 
     override fun show() {
         super.show()
         log.debug { "First screen is shown." }
-        repeat(10000) {
+        repeat(1000) {
             engine.entity {
                 with<TransformComponent>() {
                     position.set(MathUtils.random(0f, 9f), MathUtils.random(0f, 16f), MathUtils
-                        .random(0f, 9000f))
+                        .random(0f, 900000f))
                 }
-                with<GraphicComponent>() {
-                    sprite.run {
-                        setRegion(playerTexture)
-                        setSize(texture.width * UNIT_SCALE, texture.height * UNIT_SCALE)
-                        setOriginCenter()
-                    }
-                }
+                with<GraphicComponent>()
+                with<PlayerComponent>()
+                with<FacingComponent>()
             }
         }
     }
@@ -50,7 +47,6 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
 
     override fun dispose() {
         super.dispose()
-        playerTexture.dispose()
     }
 
     companion object {
