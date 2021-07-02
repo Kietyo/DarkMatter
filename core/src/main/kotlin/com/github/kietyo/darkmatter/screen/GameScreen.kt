@@ -7,10 +7,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.kietyo.darkmatter.DarkMatter
 import com.github.kietyo.darkmatter.UNIT_SCALE
-import com.github.kietyo.darkmatter.ecs.component.FacingComponent
-import com.github.kietyo.darkmatter.ecs.component.GraphicComponent
-import com.github.kietyo.darkmatter.ecs.component.PlayerComponent
-import com.github.kietyo.darkmatter.ecs.component.TransformComponent
+import com.github.kietyo.darkmatter.ecs.component.*
 import ktx.ashley.entity
 import ktx.ashley.get
 import ktx.ashley.with
@@ -23,12 +20,13 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
     override fun show() {
         super.show()
         log.debug { "First screen is shown." }
-        repeat(100000) {
+        repeat(1000) {
             engine.entity {
                 with<TransformComponent>() {
                     position.set(MathUtils.random(0f, 9f), MathUtils.random(0f, 16f), MathUtils
                         .random(0f, 900000f))
                 }
+                with<MoveComponent>()
                 with<GraphicComponent>()
                 with<PlayerComponent>()
                 with<FacingComponent>()

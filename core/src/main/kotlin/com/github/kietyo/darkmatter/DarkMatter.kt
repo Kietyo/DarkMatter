@@ -10,9 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.viewport.FitViewport
-import com.github.kietyo.darkmatter.ecs.system.PlayerAnimationSystem
-import com.github.kietyo.darkmatter.ecs.system.PlayerInputSystem
-import com.github.kietyo.darkmatter.ecs.system.RenderSystem
+import com.github.kietyo.darkmatter.ecs.system.*
 import com.github.kietyo.darkmatter.screen.DarkMatterScreen
 import com.github.kietyo.darkmatter.screen.GameScreen
 import ktx.app.KtxGame
@@ -21,22 +19,26 @@ import ktx.log.info
 import ktx.log.logger
 
 const val UNIT_SCALE = 1 / 16f
+const val V_WIDTH = 9
+const val V_HEIGHT = 16
 
 class DarkMatter : KtxGame<DarkMatterScreen>() {
 
     private val graphicsAtlas : TextureAtlas by lazy { TextureAtlas(Gdx.files.internal
         ("graphics/graphics.atlas")) }
 
-    val gameViewport = FitViewport(9f, 16f)
+    val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     val batch: SpriteBatch by lazy { SpriteBatch() }
     val engine: Engine by lazy { PooledEngine().apply {
         addSystem(PlayerInputSystem(gameViewport))
+        addSystem(MoveSystem())
         addSystem(PlayerAnimationSystem(
             graphicsAtlas.findRegion("ship_base"),
             graphicsAtlas.findRegion("ship_left"),
             graphicsAtlas.findRegion("ship_right"),
         ))
         addSystem(RenderSystem(batch, gameViewport))
+        addSystem(RemoveSystem())
     } }
 
     override fun create() {
