@@ -23,7 +23,7 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
     override fun show() {
         super.show()
         log.debug { "First screen is shown." }
-        repeat(1000) {
+        repeat(100000) {
             engine.entity {
                 with<TransformComponent>() {
                     position.set(MathUtils.random(0f, 9f), MathUtils.random(0f, 16f), MathUtils

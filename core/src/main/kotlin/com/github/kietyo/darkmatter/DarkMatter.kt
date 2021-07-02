@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.kietyo.darkmatter.ecs.system.PlayerAnimationSystem
@@ -22,19 +23,18 @@ import ktx.log.logger
 const val UNIT_SCALE = 1 / 16f
 
 class DarkMatter : KtxGame<DarkMatterScreen>() {
-    private val defaultRegion: TextureRegion by lazy { TextureRegion(Texture(Gdx.files.internal
-        ("graphics/ship_base.png"))) }
-    private val leftRegion: TextureRegion by lazy { TextureRegion(Texture(Gdx.files.internal
-        ("graphics/ship_left.png"))) }
-    private val rightRegion: TextureRegion by lazy { TextureRegion(Texture(Gdx.files.internal
-        ("graphics/ship_right.png"))) }
+
+    private val graphicsAtlas : TextureAtlas by lazy { TextureAtlas(Gdx.files.internal
+        ("graphics/graphics.atlas")) }
 
     val gameViewport = FitViewport(9f, 16f)
     val batch: SpriteBatch by lazy { SpriteBatch() }
     val engine: Engine by lazy { PooledEngine().apply {
         addSystem(PlayerInputSystem(gameViewport))
         addSystem(PlayerAnimationSystem(
-            defaultRegion, leftRegion, rightRegion
+            graphicsAtlas.findRegion("ship_base"),
+            graphicsAtlas.findRegion("ship_left"),
+            graphicsAtlas.findRegion("ship_right"),
         ))
         addSystem(RenderSystem(batch, gameViewport))
     } }
@@ -50,9 +50,7 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
         super.dispose()
         log.info { "Disposing ${batch.maxSpritesInBatch} sprites." }
         batch.dispose()
-        defaultRegion.texture.dispose()
-        leftRegion.texture.dispose()
-        rightRegion.texture.dispose()
+        graphicsAtlas.dispose()
     }
 
     companion object {
