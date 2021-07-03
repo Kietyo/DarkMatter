@@ -32,6 +32,7 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
     val engine: Engine by lazy { PooledEngine().apply {
         addSystem(PlayerInputSystem(gameViewport))
         addSystem(MoveSystem())
+        addSystem(DamageSystem())
         addSystem(PlayerAnimationSystem(
             graphicsAtlas.findRegion("ship_base"),
             graphicsAtlas.findRegion("ship_left"),
@@ -39,6 +40,7 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
         ))
         addSystem(RenderSystem(batch, gameViewport))
         addSystem(RemoveSystem())
+        addSystem(DebugSystem())
     } }
 
     override fun create() {
