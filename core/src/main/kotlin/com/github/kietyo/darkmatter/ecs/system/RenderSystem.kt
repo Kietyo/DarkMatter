@@ -41,7 +41,7 @@ class RenderSystem(private val batch: Batch, private val gameViewport: Viewport)
 
         graphic.sprite.run {
             rotation = transform.rotationDeg
-            setBounds(transform.position.x, transform.position.y, transform.size.x,
+            setBounds(transform.interpolatedPosition.x, transform.interpolatedPosition.y, transform.size.x,
                 transform.size.y)
             draw(batch)
         }

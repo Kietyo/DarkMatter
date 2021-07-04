@@ -14,23 +14,23 @@ import ktx.ashley.with
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
+import kotlin.math.min
+
+private const val MAX_DELTA_TIME_SEC = 1 / 20f
 
 class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
 
     override fun show() {
         super.show()
         log.debug { "First screen is shown." }
-        repeat(1) {
-            engine.entity {
-                with<TransformComponent>() {
-                    position.set(MathUtils.random(0f, 9f), MathUtils.random(0f, 16f), MathUtils
-                        .random(0f, 900000f))
-                }
-                with<MoveComponent>()
-                with<GraphicComponent>()
-                with<PlayerComponent>()
-                with<FacingComponent>()
+        engine.entity {
+            with<TransformComponent>() {
+                setInitialPosition(4.5f, 8f, 0f)
             }
+            with<MoveComponent>()
+            with<GraphicComponent>()
+            with<PlayerComponent>()
+            with<FacingComponent>()
         }
     }
 
@@ -40,7 +40,7 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
 
     override fun render(delta: Float) {
         super.render(delta)
-        engine.update(delta)
+        engine.update(min(MAX_DELTA_TIME_SEC, delta))
     }
 
     override fun dispose() {

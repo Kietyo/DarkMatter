@@ -9,6 +9,8 @@ import com.github.kietyo.darkmatter.ecs.component.*
 import com.github.kietyo.darkmatter.extensions.get
 import ktx.ashley.allOf
 import ktx.ashley.exclude
+import ktx.log.info
+import ktx.log.logger
 import kotlin.math.max
 import kotlin.math.min
 
@@ -27,9 +29,27 @@ class MoveSystem : IteratingSystem(
 
     override fun update(deltaTime: Float) {
         accumulator += deltaTime
+        logger.info { "deltaTime: $deltaTime, accumulator: $accumulator" }
         while (accumulator >= UPDATE_RATE) {
             accumulator -= UPDATE_RATE
+            entities.forEach { entity ->
+                entity[TransformComponent.mapper].let {
+                    transform -> transform.prevPosition.set(transform.position)
+                }
+            }
             super.update(UPDATE_RATE)
+        }
+
+        val alpha = accumulator / UPDATE_RATE
+        entities.forEach { entity ->
+            entity[TransformComponent.mapper].let {
+                it.interpolatedPosition.set(
+                    MathUtils.lerp(it.prevPosition.x, it.position.x, alpha),
+                    MathUtils.lerp(it.prevPosition.y, it.position.y, alpha),
+                    it.position.z
+                )
+
+            }
         }
     }
 
@@ -75,5 +95,9 @@ class MoveSystem : IteratingSystem(
             1f,
             V_HEIGHT + 1f - transform.size.y
         )
+    }
+
+    companion object {
+        val logger = logger<MoveSystem>()
     }
 }
