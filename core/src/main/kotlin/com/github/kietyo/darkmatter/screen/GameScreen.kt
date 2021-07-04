@@ -3,6 +3,7 @@ package com.github.kietyo.darkmatter.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.graphics.g3d.model.Animation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.kietyo.darkmatter.DarkMatter
@@ -25,14 +26,26 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
     override fun show() {
         super.show()
         log.debug { "First screen is shown." }
-        engine.entity {
+        val playerShip = engine.entity {
             with<TransformComponent>() {
-                setInitialPosition(4.5f, 8f, 0f)
+                setInitialPosition(4.5f, 8f, -1f)
             }
             with<MoveComponent>()
             with<GraphicComponent>()
             with<PlayerComponent>()
             with<FacingComponent>()
+        }
+
+        engine.entity {
+            with<TransformComponent>()
+            with<AttachComponent> {
+                entity = playerShip
+                offset.set(1f * UNIT_SCALE, -6f * UNIT_SCALE)
+            }
+            with<GraphicComponent>()
+            with<AnimationComponent> {
+                type = AnimationType.FIRE
+            }
         }
 
         engine.entity {

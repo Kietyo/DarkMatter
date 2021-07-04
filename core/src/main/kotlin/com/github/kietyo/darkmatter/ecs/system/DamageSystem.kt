@@ -9,6 +9,7 @@ import com.github.kietyo.darkmatter.extensions.get
 import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.exclude
+import ktx.ashley.getSystem
 import kotlin.math.max
 
 const val DAMAGE_AREA_HEIGHT = 2f
