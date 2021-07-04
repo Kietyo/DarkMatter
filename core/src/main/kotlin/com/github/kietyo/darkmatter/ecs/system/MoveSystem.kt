@@ -29,8 +29,8 @@ class MoveSystem : IteratingSystem(
 
     override fun update(deltaTime: Float) {
         accumulator += deltaTime
-        logger.info { "deltaTime: $deltaTime, accumulator: $accumulator" }
         while (accumulator >= UPDATE_RATE) {
+//            logger.info { "deltaTime: $deltaTime, accumulator: $accumulator, UPDATE_RATE: $UPDATE_RATE" }
             accumulator -= UPDATE_RATE
             entities.forEach { entity ->
                 entity[TransformComponent.mapper].let {
