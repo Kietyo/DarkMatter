@@ -6,9 +6,10 @@ import com.badlogic.gdx.math.MathUtils
 import com.github.kietyo.darkmatter.V_HEIGHT
 import com.github.kietyo.darkmatter.V_WIDTH
 import com.github.kietyo.darkmatter.ecs.component.*
-import com.github.kietyo.darkmatter.extensions.get
+import com.github.kietyo.darkmatter.extensions.getNonNull
 import ktx.ashley.allOf
 import ktx.ashley.exclude
+import ktx.ashley.get
 import ktx.log.info
 import ktx.log.logger
 import kotlin.math.max
@@ -33,7 +34,7 @@ class MoveSystem : IteratingSystem(
 //            logger.info { "deltaTime: $deltaTime, accumulator: $accumulator, UPDATE_RATE: $UPDATE_RATE" }
             accumulator -= UPDATE_RATE
             entities.forEach { entity ->
-                entity[TransformComponent.mapper].let {
+                entity.getNonNull(TransformComponent.mapper).let {
                     transform -> transform.prevPosition.set(transform.position)
                 }
             }
@@ -42,7 +43,7 @@ class MoveSystem : IteratingSystem(
 
         val alpha = accumulator / UPDATE_RATE
         entities.forEach { entity ->
-            entity[TransformComponent.mapper].let {
+            entity.getNonNull(TransformComponent.mapper).let {
                 it.interpolatedPosition.set(
                     MathUtils.lerp(it.prevPosition.x, it.position.x, alpha),
                     MathUtils.lerp(it.prevPosition.y, it.position.y, alpha),
@@ -54,12 +55,16 @@ class MoveSystem : IteratingSystem(
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        val transform = entity[TransformComponent.mapper]
-        val move = entity[MoveComponent.mapper]
+        val transform = entity.getNonNull(TransformComponent.mapper)
+        val move = entity.getNonNull(MoveComponent.mapper)
+
         val player = entity[PlayerComponent.mapper]
-        val facing = entity[FacingComponent.mapper]
-        movePlayer(transform, move, player, facing, deltaTime)
-        //        moveEntity(transform, move, deltaTime)
+        if (player == null) {
+            moveEntity(transform, move, deltaTime)
+        } else {
+            val facing = entity.getNonNull(FacingComponent.mapper)
+            movePlayer(transform, move, player, facing, deltaTime)
+        }
     }
 
     private fun movePlayer(

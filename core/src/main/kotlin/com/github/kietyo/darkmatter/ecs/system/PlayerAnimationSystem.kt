@@ -9,7 +9,7 @@ import com.github.kietyo.darkmatter.ecs.component.FacingComponent
 import com.github.kietyo.darkmatter.ecs.component.FacingDirection
 import com.github.kietyo.darkmatter.ecs.component.GraphicComponent
 import com.github.kietyo.darkmatter.ecs.component.PlayerComponent
-import com.github.kietyo.darkmatter.extensions.get
+import com.github.kietyo.darkmatter.extensions.getNonNull
 import ktx.ashley.allOf
 
 class PlayerAnimationSystem(
@@ -21,8 +21,8 @@ class PlayerAnimationSystem(
         ()
 ), EntityListener{
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        val facing = entity[FacingComponent.mapper]
-        val graphic = entity[GraphicComponent.mapper]
+        val facing = entity.getNonNull(FacingComponent.mapper)
+        val graphic = entity.getNonNull(GraphicComponent.mapper)
         if (facing.direction == facing.lastDirection && graphic.sprite.texture != null) {
             return
         }
@@ -36,7 +36,7 @@ class PlayerAnimationSystem(
     }
 
     override fun entityAdded(entity: Entity) {
-        entity[GraphicComponent.mapper].setSpriteRegion(defaultRegion)
+        entity.getNonNull(GraphicComponent.mapper).setSpriteRegion(defaultRegion)
     }
 
     override fun entityRemoved(entity: Entity?) {

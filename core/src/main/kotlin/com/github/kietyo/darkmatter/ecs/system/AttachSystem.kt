@@ -8,7 +8,7 @@ import com.github.kietyo.darkmatter.ecs.component.AttachComponent
 import com.github.kietyo.darkmatter.ecs.component.GraphicComponent
 import com.github.kietyo.darkmatter.ecs.component.RemoveComponent
 import com.github.kietyo.darkmatter.ecs.component.TransformComponent
-import com.github.kietyo.darkmatter.extensions.get as getNonNull
+import com.github.kietyo.darkmatter.extensions.getNonNull as getNonNull
 import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.get

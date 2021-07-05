@@ -9,9 +9,8 @@ import com.github.kietyo.darkmatter.ecs.component.FacingComponent
 import com.github.kietyo.darkmatter.ecs.component.FacingDirection
 import com.github.kietyo.darkmatter.ecs.component.PlayerComponent
 import com.github.kietyo.darkmatter.ecs.component.TransformComponent
-import com.github.kietyo.darkmatter.extensions.get
+import com.github.kietyo.darkmatter.extensions.getNonNull
 import ktx.ashley.allOf
-import ktx.log.info
 import ktx.log.logger
 
 private const val TOUCH_TOLERANCE_DISTANCE = 0.1f
@@ -25,8 +24,8 @@ class PlayerInputSystem(private val gameViewport: Viewport) : IteratingSystem(
     private val tmpVec = Vector2()
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        val facing = entity[FacingComponent.mapper]
-        val transform = entity[TransformComponent.mapper]
+        val facing = entity.getNonNull(FacingComponent.mapper)
+        val transform = entity.getNonNull(TransformComponent.mapper)
 
         tmpVec.x = Gdx.input.x.toFloat()
 //        logger.info { "tmpVec before: $tmpVec" }

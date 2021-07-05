@@ -10,7 +10,7 @@ import com.github.kietyo.darkmatter.ecs.component.Animation2D
 import com.github.kietyo.darkmatter.ecs.component.AnimationComponent
 import com.github.kietyo.darkmatter.ecs.component.AnimationType
 import com.github.kietyo.darkmatter.ecs.component.GraphicComponent
-import com.github.kietyo.darkmatter.extensions.get
+import com.github.kietyo.darkmatter.extensions.getNonNull
 import ktx.ashley.allOf
 import ktx.log.error
 import ktx.log.info
@@ -33,10 +33,10 @@ class AnimationSystem(private val atlas: TextureAtlas): IteratingSystem(allOf(An
     }
 
     override fun entityAdded(entity: Entity) {
-        entity[AnimationComponent.mapper].let {
+        entity.getNonNull(AnimationComponent.mapper).let {
             it.animation = getAnimation(it.type)
             val frame = it.animation.getKeyFrame(it.stateTime)
-            entity[GraphicComponent.mapper].setSpriteRegion(frame)
+            entity.getNonNull(GraphicComponent.mapper).setSpriteRegion(frame)
         }
     }
 
@@ -58,8 +58,8 @@ class AnimationSystem(private val atlas: TextureAtlas): IteratingSystem(allOf(An
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        val animationComponent = entity[AnimationComponent.mapper]
-        val graphicComponent = entity[GraphicComponent.mapper]
+        val animationComponent = entity.getNonNull(AnimationComponent.mapper)
+        val graphicComponent = entity.getNonNull(GraphicComponent.mapper)
 
         if (animationComponent.type == AnimationType.NONE) {
             logger.error { "No type specified for animation component $animationComponent for " +

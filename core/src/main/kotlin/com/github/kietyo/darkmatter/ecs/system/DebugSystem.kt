@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.github.kietyo.darkmatter.ecs.component.PlayerComponent
 import com.github.kietyo.darkmatter.ecs.component.TransformComponent
-import com.github.kietyo.darkmatter.extensions.get
+import com.github.kietyo.darkmatter.extensions.getNonNull
 import ktx.ashley.allOf
 import ktx.ashley.getSystem
 import kotlin.math.min
@@ -19,8 +19,8 @@ class DebugSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(),
     }
 
     override fun processEntity(entity: Entity) {
-        val player = entity[PlayerComponent.mapper]
-        val transform = entity[TransformComponent.mapper]
+        val player = entity.getNonNull(PlayerComponent.mapper)
+        val transform = entity.getNonNull(TransformComponent.mapper)
 
         when {
             Gdx.input.isKeyPressed(Input.Keys.NUM_1) -> {
