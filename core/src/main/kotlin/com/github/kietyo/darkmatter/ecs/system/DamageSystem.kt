@@ -5,6 +5,9 @@ import com.badlogic.ashley.systems.IteratingSystem
 import com.github.kietyo.darkmatter.ecs.component.PlayerComponent
 import com.github.kietyo.darkmatter.ecs.component.RemoveComponent
 import com.github.kietyo.darkmatter.ecs.component.TransformComponent
+import com.github.kietyo.darkmatter.event.GameEventManager
+import com.github.kietyo.darkmatter.event.GameEventPlayerDeath
+import com.github.kietyo.darkmatter.event.GameEventType
 import com.github.kietyo.darkmatter.extensions.getNonNull
 import ktx.ashley.addComponent
 import ktx.ashley.allOf
@@ -15,7 +18,8 @@ const val DAMAGE_AREA_HEIGHT = 2f
 private const val DAMAGE_PER_SECOND = 25f
 private const val DEATH_EXPLOSION_DURATION = 0.9f
 
-class DamageSystem : IteratingSystem(allOf(PlayerComponent::class, TransformComponent::class)
+class DamageSystem(private val gameEventManager: GameEventManager) : IteratingSystem(allOf(PlayerComponent::class,
+    TransformComponent::class)
     .exclude(RemoveComponent::class).get()) {
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val transform = entity.getNonNull(TransformComponent.mapper)
@@ -35,6 +39,10 @@ class DamageSystem : IteratingSystem(allOf(PlayerComponent::class, TransformComp
 
             player.life -= damage
             if (player.life <= 0f) {
+                gameEventManager.dispatchEvent(GameEventType.PLAYER_DEATH,
+                GameEventPlayerDeath.apply {
+                    this.distance = player.distance
+                })
                 entity.addComponent<RemoveComponent>(engine) {
                     delay = DEATH_EXPLOSION_DURATION
                 }

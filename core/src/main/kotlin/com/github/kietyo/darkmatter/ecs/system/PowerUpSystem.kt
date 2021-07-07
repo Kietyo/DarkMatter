@@ -6,6 +6,9 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.github.kietyo.darkmatter.V_WIDTH
 import com.github.kietyo.darkmatter.ecs.component.*
+import com.github.kietyo.darkmatter.event.GameEventCollectPowerUp
+import com.github.kietyo.darkmatter.event.GameEventManager
+import com.github.kietyo.darkmatter.event.GameEventType
 import com.github.kietyo.darkmatter.extensions.getNonNull
 import com.github.kietyo.darkmatter.extensions.getRandom
 import ktx.ashley.*
@@ -32,7 +35,9 @@ private class SpawnPattern(
     val types: GdxArray<PowerUpType> = gdxArrayOf(type1, type2, type3, type4, type5)
 )
 
-class PowerUpSystem : IteratingSystem(
+class PowerUpSystem(
+    val gameEventManager: GameEventManager
+) : IteratingSystem(
     allOf(PowerUpComponent::class, TransformComponent::class)
         .exclude(RemoveComponent::class).get()
 ) {
@@ -47,13 +52,15 @@ class PowerUpSystem : IteratingSystem(
         SpawnPattern(
             type1 = PowerUpType.SPEED_1,
             type2 = PowerUpType.SPEED_2,
-            type5 = PowerUpType.LIFE,
-        ),
-        SpawnPattern(
-            type2 = PowerUpType.LIFE,
-            type3 = PowerUpType.SHIELD,
+            type3 = PowerUpType.SPEED_1,
             type4 = PowerUpType.SPEED_2,
-        )
+            type5 = PowerUpType.SPEED_1,
+        ),
+//        SpawnPattern(
+//            type2 = PowerUpType.LIFE,
+//            type3 = PowerUpType.SHIELD,
+//            type4 = PowerUpType.SPEED_2,
+//        )
     )
 
     private val currentSpawnPattern = GdxArray<PowerUpType>()
@@ -80,8 +87,8 @@ class PowerUpSystem : IteratingSystem(
     private fun spawnPowerUp(powerUpType: PowerUpType, x: Float, y: Float) {
         engine.entity {
             with<TransformComponent> { setInitialPosition(x, y, 0f) }
-            with<PowerUpComponent> { type = powerUpType}
-            with<AnimationComponent> { type = powerUpType.animationType}
+            with<PowerUpComponent> { type = powerUpType }
+            with<AnimationComponent> { type = powerUpType.animationType }
             with<GraphicComponent>()
             with<MoveComponent> {
                 speed.y = POWER_UP_SPEED
@@ -120,7 +127,7 @@ class PowerUpSystem : IteratingSystem(
 
     private fun collectPowerUp(player: Entity, powerUpEntity: Entity) {
         val powerUp = powerUpEntity.getNonNull(PowerUpComponent.mapper)
-        logger.debug { "Picking up power up of type: ${powerUp.type}"}
+        logger.debug { "Picking up power up of type: ${powerUp.type}" }
 
         when (powerUp.type) {
             PowerUpType.SPEED_1 -> {
@@ -142,10 +149,16 @@ class PowerUpSystem : IteratingSystem(
                 shield = min(maxShield, shield + SHIELD_GAIN)
             }
             else -> {
-                logger.error { "Unsupported power up type: ${powerUp.type}"}
+                logger.error { "Unsupported power up type: ${powerUp.type}" }
             }
         }
 
+        gameEventManager.dispatchEvent(
+            GameEventType.COLLECT_POWER_UP,
+            GameEventCollectPowerUp.apply {
+                this.player = player
+                this.type = powerUp.type
+            })
         powerUpEntity.addComponent<RemoveComponent>(engine)
     }
 

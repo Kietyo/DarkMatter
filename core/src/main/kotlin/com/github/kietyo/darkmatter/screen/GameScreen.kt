@@ -11,6 +11,10 @@ import com.github.kietyo.darkmatter.UNIT_SCALE
 import com.github.kietyo.darkmatter.V_WIDTH
 import com.github.kietyo.darkmatter.ecs.component.*
 import com.github.kietyo.darkmatter.ecs.system.DAMAGE_AREA_HEIGHT
+import com.github.kietyo.darkmatter.event.GameEvent
+import com.github.kietyo.darkmatter.event.GameEventListener
+import com.github.kietyo.darkmatter.event.GameEventPlayerDeath
+import com.github.kietyo.darkmatter.event.GameEventType
 import ktx.ashley.entity
 import ktx.ashley.get
 import ktx.ashley.with
@@ -21,11 +25,31 @@ import kotlin.math.min
 
 private const val MAX_DELTA_TIME_SEC = 1 / 20f
 
-class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
+class GameScreen(game: DarkMatter) : DarkMatterScreen(game), GameEventListener {
 
     override fun show() {
         super.show()
         log.debug { "First screen is shown." }
+        gameEventManager.addListeners(GameEventType.PLAYER_DEATH, this)
+        spawnPlayer()
+
+        engine.entity {
+            with<TransformComponent>() {
+                size.set(V_WIDTH.toFloat(), DAMAGE_AREA_HEIGHT)
+            }
+            with<AnimationComponent>() {
+                type = AnimationType.DARK_MATTER
+            }
+            with<GraphicComponent>()
+        }
+    }
+
+    override fun hide() {
+        super.hide()
+        gameEventManager.removeListener(this)
+    }
+
+    private fun spawnPlayer() {
         val playerShip = engine.entity {
             with<TransformComponent>() {
                 setInitialPosition(4.5f, 8f, -1f)
@@ -47,16 +71,6 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
                 type = AnimationType.FIRE
             }
         }
-
-        engine.entity {
-            with<TransformComponent>() {
-                size.set(V_WIDTH.toFloat(), DAMAGE_AREA_HEIGHT)
-            }
-            with<AnimationComponent>() {
-                type = AnimationType.DARK_MATTER
-            }
-            with<GraphicComponent>()
-        }
     }
 
     override fun resize(width: Int, height: Int) {
@@ -74,5 +88,12 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
 
     companion object {
         private val log = logger<GameScreen>()
+    }
+
+    override fun onEvent(type: GameEventType, data: GameEvent?) {
+        if (type == GameEventType.PLAYER_DEATH) {
+            val eventData = data as GameEventPlayerDeath
+            spawnPlayer()
+        }
     }
 }

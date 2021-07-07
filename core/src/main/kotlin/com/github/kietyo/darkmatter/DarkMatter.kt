@@ -5,16 +5,14 @@ import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.kietyo.darkmatter.ecs.system.*
+import com.github.kietyo.darkmatter.event.GameEventManager
 import com.github.kietyo.darkmatter.screen.DarkMatterScreen
 import com.github.kietyo.darkmatter.screen.GameScreen
 import ktx.app.KtxGame
-import ktx.app.KtxScreen
 import ktx.log.info
 import ktx.log.logger
 
@@ -34,12 +32,15 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
 
     val uiViewport = FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat())
     val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
+
+    val gameEventManager = GameEventManager()
+
     val batch: SpriteBatch by lazy { SpriteBatch() }
     val engine: Engine by lazy { PooledEngine().apply {
         addSystem(PlayerInputSystem(gameViewport))
         addSystem(MoveSystem())
-        addSystem(PowerUpSystem())
-        addSystem(DamageSystem())
+        addSystem(PowerUpSystem(gameEventManager))
+        addSystem(DamageSystem(gameEventManager))
         addSystem(PlayerAnimationSystem(
             graphicsAtlas.findRegion("ship_base"),
             graphicsAtlas.findRegion("ship_left"),
@@ -47,7 +48,7 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
         ))
         addSystem(AttachSystem())
         addSystem(AnimationSystem(graphicsAtlas))
-        addSystem(RenderSystem(batch, gameViewport, uiViewport, backgroundTexture))
+        addSystem(RenderSystem(batch, gameViewport, uiViewport, backgroundTexture, gameEventManager))
         addSystem(RemoveSystem())
         addSystem(DebugSystem())
     } }
