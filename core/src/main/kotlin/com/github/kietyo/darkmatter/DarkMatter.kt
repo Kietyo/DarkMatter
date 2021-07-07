@@ -19,6 +19,10 @@ import ktx.log.info
 import ktx.log.logger
 
 const val UNIT_SCALE = 1 / 16f
+
+const val V_WIDTH_PIXELS = 135
+const val V_HEIGHT_PIXELS = 240
+
 const val V_WIDTH = 9
 const val V_HEIGHT = 16
 
@@ -26,7 +30,9 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
 
     private val graphicsAtlas : TextureAtlas by lazy { TextureAtlas(Gdx.files.internal
         ("graphics/graphics.atlas")) }
+    private val backgroundTexture by lazy { Texture("graphics/background.png") }
 
+    val uiViewport = FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat())
     val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     val batch: SpriteBatch by lazy { SpriteBatch() }
     val engine: Engine by lazy { PooledEngine().apply {
@@ -41,7 +47,7 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
         ))
         addSystem(AttachSystem())
         addSystem(AnimationSystem(graphicsAtlas))
-        addSystem(RenderSystem(batch, gameViewport))
+        addSystem(RenderSystem(batch, gameViewport, uiViewport, backgroundTexture))
         addSystem(RemoveSystem())
         addSystem(DebugSystem())
     } }
@@ -58,6 +64,7 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
         log.info { "Disposing ${batch.maxSpritesInBatch} sprites." }
         batch.dispose()
         graphicsAtlas.dispose()
+        backgroundTexture.dispose()
     }
 
     companion object {
