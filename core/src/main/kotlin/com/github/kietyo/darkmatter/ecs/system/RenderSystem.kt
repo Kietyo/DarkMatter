@@ -43,12 +43,12 @@ class RenderSystem(
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)
-        gameEventManager.addListeners(GameEventType.COLLECT_POWER_UP, this)
+        gameEventManager.addListeners<GameEvent.CollectPowerUp>(this)
     }
 
     override fun removedFromEngine(engine: Engine?) {
         super.removedFromEngine(engine)
-        gameEventManager.removeListener(GameEventType.COLLECT_POWER_UP, this)
+        gameEventManager.removeListeners<GameEvent.CollectPowerUp>(this)
     }
 
     override fun update(deltaTime: Float) {
@@ -97,12 +97,11 @@ class RenderSystem(
         val log = logger<RenderSystem>()
     }
 
-    override fun onEvent(type: GameEventType, data: GameEvent?) {
-        if (type == GameEventType.COLLECT_POWER_UP) {
-            val eventData = data as GameEventCollectPowerUp
-            if (eventData.type == PowerUpType.SPEED_1) {
+    override fun onEvent(gameEvent: GameEvent) {
+        if (gameEvent is GameEvent.CollectPowerUp) {
+            if (gameEvent.type == PowerUpType.SPEED_1) {
                 backgroundScrollSpeed.y -= 0.25f
-            } else if (eventData.type == PowerUpType.SPEED_2) {
+            } else if (gameEvent.type == PowerUpType.SPEED_2) {
                 backgroundScrollSpeed.y -= 0.5f
             }
         }

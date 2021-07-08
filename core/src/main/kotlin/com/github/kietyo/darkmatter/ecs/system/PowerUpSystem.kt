@@ -6,9 +6,8 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.github.kietyo.darkmatter.V_WIDTH
 import com.github.kietyo.darkmatter.ecs.component.*
-import com.github.kietyo.darkmatter.event.GameEventCollectPowerUp
+import com.github.kietyo.darkmatter.event.GameEvent
 import com.github.kietyo.darkmatter.event.GameEventManager
-import com.github.kietyo.darkmatter.event.GameEventType
 import com.github.kietyo.darkmatter.extensions.getNonNull
 import com.github.kietyo.darkmatter.extensions.getRandom
 import ktx.ashley.*
@@ -56,11 +55,11 @@ class PowerUpSystem(
             type4 = PowerUpType.SPEED_2,
             type5 = PowerUpType.SPEED_1,
         ),
-//        SpawnPattern(
-//            type2 = PowerUpType.LIFE,
-//            type3 = PowerUpType.SHIELD,
-//            type4 = PowerUpType.SPEED_2,
-//        )
+        //        SpawnPattern(
+        //            type2 = PowerUpType.LIFE,
+        //            type3 = PowerUpType.SHIELD,
+        //            type4 = PowerUpType.SPEED_2,
+        //        )
     )
 
     private val currentSpawnPattern = GdxArray<PowerUpType>()
@@ -154,8 +153,7 @@ class PowerUpSystem(
         }
 
         gameEventManager.dispatchEvent(
-            GameEventType.COLLECT_POWER_UP,
-            GameEventCollectPowerUp.apply {
+            GameEvent.CollectPowerUp.apply {
                 this.player = player
                 this.type = powerUp.type
             })

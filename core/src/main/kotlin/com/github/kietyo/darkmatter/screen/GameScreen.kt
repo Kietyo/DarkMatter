@@ -13,8 +13,6 @@ import com.github.kietyo.darkmatter.ecs.component.*
 import com.github.kietyo.darkmatter.ecs.system.DAMAGE_AREA_HEIGHT
 import com.github.kietyo.darkmatter.event.GameEvent
 import com.github.kietyo.darkmatter.event.GameEventListener
-import com.github.kietyo.darkmatter.event.GameEventPlayerDeath
-import com.github.kietyo.darkmatter.event.GameEventType
 import ktx.ashley.entity
 import ktx.ashley.get
 import ktx.ashley.with
@@ -30,7 +28,7 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game), GameEventListener {
     override fun show() {
         super.show()
         log.debug { "First screen is shown." }
-        gameEventManager.addListeners(GameEventType.PLAYER_DEATH, this)
+        gameEventManager.addListeners<GameEvent.PlayerDeath>(this)
         spawnPlayer()
 
         engine.entity {
@@ -90,9 +88,8 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game), GameEventListener {
         private val log = logger<GameScreen>()
     }
 
-    override fun onEvent(type: GameEventType, data: GameEvent?) {
-        if (type == GameEventType.PLAYER_DEATH) {
-            val eventData = data as GameEventPlayerDeath
+    override fun onEvent(gameEvent: GameEvent) {
+        if (gameEvent is GameEvent.PlayerDeath) {
             spawnPlayer()
         }
     }
