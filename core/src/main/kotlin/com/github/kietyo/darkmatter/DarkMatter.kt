@@ -41,6 +41,7 @@ class DarkMatter : KtxGame<DarkMatterScreen>() {
         addSystem(MoveSystem())
         addSystem(PowerUpSystem(gameEventManager))
         addSystem(DamageSystem(gameEventManager))
+        addSystem(CameraShakeSystem(gameViewport.camera, gameEventManager))
         addSystem(PlayerAnimationSystem(
             graphicsAtlas.findRegion("ship_base"),
             graphicsAtlas.findRegion("ship_left"),

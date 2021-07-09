@@ -41,6 +41,11 @@ class DamageSystem(private val gameEventManager: GameEventManager) : IteratingSy
             }
 
             player.life -= damage
+            gameEventManager.dispatchEvent(GameEvent.PlayerHit.apply {
+                this.player = entity
+                this.life = player.life
+                this.maxLife = player.maxLife
+            })
             if (player.life <= 0f) {
                 gameEventManager.dispatchEvent(GameEvent.PlayerDeath.apply {
                     this.distance = player.distance
